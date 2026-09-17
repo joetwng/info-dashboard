@@ -65,9 +65,9 @@ php -S localhost:8080
 
 | 代號 | 公司 | 股數 |
 |------|------|------|
-| TSLA | Tesla | 30 |
-| NVDA | NVIDIA | 30 |
-| LCID | Lucid | 3000 |
+| TSLA | Tesla | 10 |
+| NVDA | NVIDIA | 10 |
+| LCID | Lucid | 10 |
 
 ## 檔案結構
 
