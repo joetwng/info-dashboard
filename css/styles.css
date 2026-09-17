@@ -485,3 +485,14 @@ tbody tr:hover {
     font-size: 1.25rem;
   }
 }
+
+/* 當日波幅 */
+.amplitude {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--text-muted, #8b9bb4);
+}
+.amplitude small {
+  color: var(--text-muted, #8b9bb4);
+  font-size: 0.8em;
+}

@@ -44,6 +44,13 @@
     return formatUSD(low) + " – " + formatUSD(high);
   }
 
+  function formatAmplitude(low, high, close) {
+    const amp = high - low;
+    const pct = close ? (amp / close) * 100 : 0;
+    return formatUSD(amp) + " <small>(" + pct.toFixed(2) + "%)</small>";
+  }
+
+
   function changeClass(n) {
     if (n > 0) return "change-pos";
     if (n < 0) return "change-neg";
@@ -104,6 +111,9 @@
         "</small></td>" +
         "<td>" +
         formatRange(h.dayLow, h.dayHigh) +
+        "</td>" +
+        '<td class="amplitude">' +
+        formatAmplitude(h.dayLow, h.dayHigh, h.close) +
         "</td>" +
         "<td>" +
         formatUSD(positionValue) +
