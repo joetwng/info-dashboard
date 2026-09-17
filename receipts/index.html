@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>STAR 收據一覽</title>
+    <link rel="stylesheet" href="receipts.css" />
+  </head>
+  <body>
+    <main class="receipts-page">
+      <header class="page-header">
+        <a class="back-link" href="../">← 返回資訊分享儀表板</a>
+        <h1>STAR 收據一覽</h1>
+        <p class="subtitle">已收集的 STAR 收據 PDF</p>
+      </header>
+
+      <section class="receipt-section" aria-labelledby="receipt-heading">
+        <div class="section-heading">
+          <h2 id="receipt-heading">收據</h2>
+          <span class="count" id="receipt-count" aria-live="polite"></span>
+        </div>
+        <label class="search-label" for="receipt-search">搜尋檔案名稱</label>
+        <input
+          id="receipt-search"
+          class="search-input"
+          type="search"
+          placeholder="例如：K1-0667"
+          autocomplete="off"
+        />
+        <div id="receipt-list" class="receipt-list" aria-live="polite"></div>
+        <p id="empty-state" class="empty-state" hidden>找不到符合的收據。</p>
+      </section>
+
+      <footer class="page-footer">
+        <a href="../">資訊分享儀表板</a>
+      </footer>
+    </main>
+
+    <script>
+      const fallbackManifest = [
+        {
+          name: "K1-0667-PICKUP.pdf",
+          file: "pdfs/K1-0667-PICKUP.pdf",
+          title: "K1-0667 PICKUP",
+          mac: "00:11:62:42:79:1c"
+        }
+      ];
+      const searchInput = document.getElementById("receipt-search");
+      const receiptList = document.getElementById("receipt-list");
+      const emptyState = document.getElementById("empty-state");
+      const receiptCount = document.getElementById("receipt-count");
+      let receipts = [];
+
+      function renderReceipts() {
+        const query = searchInput.value.trim().toLocaleLowerCase();
+        const matches = receipts.filter((receipt) =>
+          receipt.name.toLocaleLowerCase().includes(query)
+        );
+
+        receiptList.replaceChildren();
+        emptyState.hidden = matches.length !== 0;
+        receiptCount.textContent = `${matches.length} / ${receipts.length}`;
+
+        matches.forEach((receipt) => {
+          const link = document.createElement("a");
+          link.className = "receipt-card";
+          link.href = receipt.file;
+          link.target = "_blank";
+          link.rel = "noopener";
+          link.innerHTML = `
+            <span class="file-icon" aria-hidden="true">PDF</span>
+            <span class="receipt-details">
+              <strong>${escapeHtml(receipt.title || receipt.name)}</strong>
+              <span>${escapeHtml(receipt.name)}</span>
+              ${receipt.mac ? `<small>MAC：${escapeHtml(receipt.mac)}</small>` : ""}
+            </span>
+            <span class="open-icon" aria-hidden="true">↗</span>
+          `;
+          receiptList.appendChild(link);
+        });
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      searchInput.addEventListener("input", renderReceipts);
+
+      fetch("manifest.json")
+        .then((response) => {
+          if (!response.ok) throw new Error(`Manifest request failed: ${response.status}`);
+          return response.json();
+        })
+        .catch(() => fallbackManifest)
+        .then((manifest) => {
+          receipts = Array.isArray(manifest) ? manifest : fallbackManifest;
+          renderReceipts();
+        });
+    </script>
+  </body>
+</html>
