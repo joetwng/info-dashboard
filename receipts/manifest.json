@@ -1,10 +1,5 @@
 [
   {
-    "name": "B1-0668-PICKUP-2.pdf",
-    "file": "pdfs/B1-0668-PICKUP-2.pdf",
-    "title": "B1 0668 PICKUP 2"
-  },
-  {
     "name": "B1-0668-PICKUP.pdf",
     "file": "pdfs/B1-0668-PICKUP.pdf",
     "title": "B1 0668 PICKUP"
@@ -15,24 +10,9 @@
     "title": "B1 0669 11"
   },
   {
-    "name": "B1-0670-11-2.pdf",
-    "file": "pdfs/B1-0670-11-2.pdf",
-    "title": "B1 0670 11 2"
-  },
-  {
-    "name": "B1-0670-11-3.pdf",
-    "file": "pdfs/B1-0670-11-3.pdf",
-    "title": "B1 0670 11 3"
-  },
-  {
     "name": "B1-0670-11.pdf",
     "file": "pdfs/B1-0670-11.pdf",
     "title": "B1 0670 11"
-  },
-  {
-    "name": "B1-0671-11-2.pdf",
-    "file": "pdfs/B1-0671-11-2.pdf",
-    "title": "B1 0671 11 2"
   },
   {
     "name": "B1-0671-11.pdf",
@@ -83,16 +63,6 @@
     "name": "B1-0681-13.pdf",
     "file": "pdfs/B1-0681-13.pdf",
     "title": "B1 0681 13"
-  },
-  {
-    "name": "K1-0667-PICKUP-2.pdf",
-    "file": "pdfs/K1-0667-PICKUP-2.pdf",
-    "title": "K1 0667 PICKUP 2"
-  },
-  {
-    "name": "K1-0667-PICKUP-3.pdf",
-    "file": "pdfs/K1-0667-PICKUP-3.pdf",
-    "title": "K1 0667 PICKUP 3"
   },
   {
     "name": "K1-0667-PICKUP.pdf",
