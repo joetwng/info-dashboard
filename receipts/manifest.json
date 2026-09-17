@@ -167,11 +167,18 @@
   {
     "name": "K1-0667-PICKUP.pdf",
     "file": "pdfs/K1-0667-PICKUP.pdf",
-    "title": "K1-0667-PICKUP"
+    "title": "K1-0667-PICKUP",
+    "mac": "00:11:62:42:79:1c"
   },
   {
     "name": "PQ-DRINKS-UAT-0448-12.pdf",
     "file": "pdfs/PQ-DRINKS-UAT-0448-12.pdf",
     "title": "PQ-DRINKS-UAT-0448-12"
+  },
+  {
+    "name": "Test_PrintQ-2741-NA.pdf",
+    "file": "pdfs/Test_PrintQ-2741-NA.pdf",
+    "title": "Test_PrintQ-2741-NA",
+    "mac": "00:11:62:42:79:1c"
   }
 ]
