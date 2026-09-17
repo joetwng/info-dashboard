@@ -496,3 +496,15 @@ tbody tr:hover {
   color: var(--text-muted, #8b9bb4);
   font-size: 0.8em;
 }
+
+/* 預計下日區間（估算） */
+.next-range {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: #c4b5fd;
+}
+.next-range .est-note,
+.est-note {
+  color: var(--text-muted, #8b9bb4);
+  font-size: 0.75em;
+}

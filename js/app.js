@@ -51,6 +51,21 @@
   }
 
 
+  /** 簡單估算：以下日收市為中軸，用今日波幅作預期區間（非預測保證） */
+  function formatNextDayRange(close, low, high) {
+    const amp = high - low;
+    const predLow = close - amp;
+    const predHigh = close + amp;
+    return (
+      formatUSD(predLow) +
+      " – " +
+      formatUSD(predHigh) +
+      ' <small class="est-note">估算</small>'
+    );
+  }
+
+
+
   function changeClass(n) {
     if (n > 0) return "change-pos";
     if (n < 0) return "change-neg";
@@ -114,6 +129,9 @@
         "</td>" +
         '<td class="amplitude">' +
         formatAmplitude(h.dayLow, h.dayHigh, h.close) +
+        "</td>" +
+        '<td class="next-range" title="以收市價 ± 當日波幅估算，僅供參考">' +
+        formatNextDayRange(h.close, h.dayLow, h.dayHigh) +
         "</td>" +
         "<td>" +
         formatUSD(positionValue) +
