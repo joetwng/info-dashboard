@@ -1,0 +1,85 @@
+/**
+ * 美股收市助手 — 最新交易日資料（schemaVersion 1）
+ * 與 data/stocks-latest.json 內容相同，掛到 window.STOCKS_SESSION，
+ * 以便 file:// 開啟時無需 fetch。
+ */
+window.STOCKS_SESSION = {
+  "schemaVersion": 1,
+  "sessionDate": "2026-09-16",
+  "sessionLabel": "美東常規時段",
+  "timezoneNote": "價位為該交易日收市；摘要通常喺香港翌朝交",
+  "currency": "USD",
+  "source": "Yahoo Finance；股數已更新為 LCID 3000",
+  "generatedAt": "2026-09-17T09:13:00+08:00",
+  "holdings": [
+    {
+      "ticker": "TSLA",
+      "name": "Tesla",
+      "shares": 30,
+      "close": 358.08,
+      "change": 1.5,
+      "changePct": 0.42,
+      "dayLow": 354.89,
+      "dayHigh": 365.05,
+      "volume": 32040000,
+      "avgVolume20": 39110000,
+      "volumeVsAvg": 0.82,
+      "positionValue": 10742.4,
+      "news": [
+        {
+          "headline": "NHTSA orders Tesla to answer Cybercab self-certification questions by Sep 30",
+          "url": "https://www.channelnewsasia.com/business/us-agency-orders-tesla-answer-questions-cybercab-certification-6386996"
+        },
+        {
+          "headline": "Tesla deploys first preassembled Accordion Supercharger (16 stalls, ~20% cheaper install)",
+          "url": "https://electrek.co/2026/09/16/tesla-accordion-supercharger-deployment/"
+        }
+      ]
+    },
+    {
+      "ticker": "NVDA",
+      "name": "NVIDIA",
+      "shares": 30,
+      "close": 213.9,
+      "change": 1.73,
+      "changePct": 0.82,
+      "dayLow": 212.5,
+      "dayHigh": 216.76,
+      "volume": 96110000,
+      "avgVolume20": 130270000,
+      "volumeVsAvg": 0.74,
+      "positionValue": 6417.0,
+      "news": [
+        {
+          "headline": "Vera Rubin NVL72 preview: up to 3.7× GB300 throughput in MLPerf Inference v6.1",
+          "url": "https://blogs.nvidia.com/blog/vera-rubin-nvl72-mlperf-inference/"
+        },
+        {
+          "headline": "NVIDIA, Google, Emerald AI launch AI Energy Management Alliance",
+          "url": "https://blogs.nvidia.com/blog/ai-energy-management-alliance/"
+        }
+      ]
+    },
+    {
+      "ticker": "LCID",
+      "name": "Lucid",
+      "shares": 3000,
+      "close": 4.04,
+      "change": -0.08,
+      "changePct": -1.94,
+      "dayLow": 3.94,
+      "dayHigh": 4.17,
+      "volume": 11840000,
+      "avgVolume20": 11950000,
+      "volumeVsAvg": 0.99,
+      "positionValue": 12120.0,
+      "news": [
+        {
+          "headline": "Reports: Apple backend code lists Lucid among brands expected for Wallet Car Key (no official date)",
+          "url": "https://teslanorth.com/2026/09/16/lucid-apple-car-key-code/"
+        }
+      ]
+    }
+  ],
+  "portfolioTotal": 29279.4
+};

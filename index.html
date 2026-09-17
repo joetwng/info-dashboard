@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>資訊分享儀表板｜Joe</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <h1>資訊分享儀表板</h1>
+        <p class="subtitle">Joe 的狀態一覽 · 美股／專案／Ticket</p>
+      </div>
+      <div style="text-align: right">
+        <span class="badge-mock" id="mock-badge">美股：收市資料 · 其餘示範</span>
+        <p class="subtitle" id="mock-updated" style="margin-top: 0.4rem"></p>
+      </div>
+    </header>
+
+    <main>
+      <!-- A) 美股／投資狀態 -->
+      <section class="section" aria-labelledby="sec-portfolio">
+        <div class="section-header">
+          <h2 id="sec-portfolio">美股／投資狀態</h2>
+          <span class="hint">來自美股收市助手 · 非即時</span>
+        </div>
+        <div class="section-body">
+          <div class="portfolio-summary">
+            <div class="stat-card">
+              <div class="label">組合總值</div>
+              <div class="value" id="portfolio-total-value">—</div>
+            </div>
+            <div class="stat-card">
+              <div class="label">當日盈虧</div>
+              <div class="value" id="portfolio-day-pl">—</div>
+            </div>
+          </div>
+
+          <p class="session-meta" id="portfolio-session-meta"></p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>代號／公司</th>
+                  <th>股數</th>
+                  <th>收市價</th>
+                  <th>當日變動</th>
+                  <th>當日高低</th>
+                  <th>持倉市值</th>
+                </tr>
+              </thead>
+              <tbody id="holdings-tbody"></tbody>
+            </table>
+          </div>
+
+          <div id="portfolio-news" class="portfolio-news"></div>
+
+          <p class="disclaimer" id="portfolio-disclaimer"></p>
+        </div>
+      </section>
+
+      <!-- B) 團隊／專案進度 -->
+      <section class="section" aria-labelledby="sec-projects">
+        <div class="section-header">
+          <h2 id="sec-projects">團隊／專案進度</h2>
+          <span class="hint">示範專案列表</span>
+        </div>
+        <div class="section-body">
+          <div class="project-grid" id="project-grid"></div>
+        </div>
+      </section>
+
+      <!-- C) Ticket／Jira 狀態 -->
+      <section class="section" aria-labelledby="sec-tickets">
+        <div class="section-header">
+          <h2 id="sec-tickets">Ticket／Jira 狀態</h2>
+          <span class="hint">示範工單摘要</span>
+        </div>
+        <div class="section-body">
+          <div class="ticket-summary">
+            <div class="ticket-stat todo">
+              <div class="count" id="ticket-todo">—</div>
+              <div class="label">待辦</div>
+            </div>
+            <div class="ticket-stat in-progress">
+              <div class="count" id="ticket-in-progress">—</div>
+              <div class="label">進行中</div>
+            </div>
+            <div class="ticket-stat done">
+              <div class="count" id="ticket-done">—</div>
+              <div class="label">完成</div>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>編號</th>
+                  <th>標題</th>
+                  <th>負責人</th>
+                  <th>優先級</th>
+                  <th>狀態</th>
+                </tr>
+              </thead>
+              <tbody id="tickets-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      資訊分享儀表板 · 純靜態頁面 · 美股為收市資料（非即時）· 專案／Ticket 為示範
+    </footer>
+
+    <script src="data/stocks.js"></script>
+    <script src="data/mock.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
