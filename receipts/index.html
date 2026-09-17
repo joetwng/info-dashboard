@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>STAR 收據一覽</title>
-    <link rel="stylesheet" href="receipts.css?v=202609171220" />
+    <link rel="stylesheet" href="receipts.css?v=202609171221" />
   </head>
   <body>
     <main class="receipts-page">
@@ -91,7 +91,7 @@
 
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=202609171220")
+      fetch("manifest.json?v=202609171221")
         .then((response) => {
           if (!response.ok) throw new Error(`Manifest request failed: ${response.status}`);
           return response.json();
