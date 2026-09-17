@@ -1,7 +1,6 @@
 /**
  * 美股收市助手 — 最新交易日資料（schemaVersion 1）
- * 與 data/stocks-latest.json 內容相同，掛到 window.STOCKS_SESSION，
- * 以便 file:// 開啟時無需 fetch。
+ * 與 data/stocks-latest.json 內容相同，掛到 window.STOCKS_SESSION。
  */
 window.STOCKS_SESSION = {
   "schemaVersion": 1,
@@ -9,13 +8,13 @@ window.STOCKS_SESSION = {
   "sessionLabel": "美東常規時段",
   "timezoneNote": "價位為該交易日收市；摘要通常喺香港翌朝交",
   "currency": "USD",
-  "source": "Yahoo Finance；股數已更新為 LCID 3000",
-  "generatedAt": "2026-09-17T09:13:00+08:00",
+  "source": "Yahoo Finance；股數已 reset 為各 10 股",
+  "generatedAt": "2026-09-17T09:23:00+08:00",
   "holdings": [
     {
       "ticker": "TSLA",
       "name": "Tesla",
-      "shares": 30,
+      "shares": 10,
       "close": 358.08,
       "change": 1.5,
       "changePct": 0.42,
@@ -24,7 +23,7 @@ window.STOCKS_SESSION = {
       "volume": 32040000,
       "avgVolume20": 39110000,
       "volumeVsAvg": 0.82,
-      "positionValue": 10742.4,
+      "positionValue": 3580.8,
       "news": [
         {
           "headline": "NHTSA orders Tesla to answer Cybercab self-certification questions by Sep 30",
@@ -39,7 +38,7 @@ window.STOCKS_SESSION = {
     {
       "ticker": "NVDA",
       "name": "NVIDIA",
-      "shares": 30,
+      "shares": 10,
       "close": 213.9,
       "change": 1.73,
       "changePct": 0.82,
@@ -48,7 +47,7 @@ window.STOCKS_SESSION = {
       "volume": 96110000,
       "avgVolume20": 130270000,
       "volumeVsAvg": 0.74,
-      "positionValue": 6417.0,
+      "positionValue": 2139.0,
       "news": [
         {
           "headline": "Vera Rubin NVL72 preview: up to 3.7× GB300 throughput in MLPerf Inference v6.1",
@@ -63,7 +62,7 @@ window.STOCKS_SESSION = {
     {
       "ticker": "LCID",
       "name": "Lucid",
-      "shares": 3000,
+      "shares": 10,
       "close": 4.04,
       "change": -0.08,
       "changePct": -1.94,
@@ -72,7 +71,7 @@ window.STOCKS_SESSION = {
       "volume": 11840000,
       "avgVolume20": 11950000,
       "volumeVsAvg": 0.99,
-      "positionValue": 12120.0,
+      "positionValue": 40.4,
       "news": [
         {
           "headline": "Reports: Apple backend code lists Lucid among brands expected for Wallet Car Key (no official date)",
@@ -81,5 +80,5 @@ window.STOCKS_SESSION = {
       ]
     }
   ],
-  "portfolioTotal": 29279.4
+  "portfolioTotal": 5760.2
 };
