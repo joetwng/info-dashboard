@@ -12,33 +12,61 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; height: 100%; }
 body {
   margin: 0;
-  min-height: 100vh;
+  height: 100%;
+  overflow: hidden;
   background: var(--bg);
   color: var(--text);
   font-family: var(--font);
   line-height: 1.5;
 }
 
-.receipts-page { max-width: 1200px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
-.page-header { margin-bottom: 1.5rem; }
+.receipts-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.25rem 1.25rem 1rem;
+  overflow: hidden;
+}
+
+.page-header {
+  flex: 0 0 auto;
+  margin-bottom: 1rem;
+}
 .back-link, .page-footer a { color: #93c5fd; text-decoration: none; }
 .back-link:hover, .page-footer a:hover { text-decoration: underline; }
-h1 { margin: 1.25rem 0 0.25rem; font-size: clamp(1.6rem, 4vw, 2.2rem); }
+h1 { margin: 1rem 0 0.25rem; font-size: clamp(1.6rem, 4vw, 2.2rem); }
 .subtitle { margin: 0; color: var(--text-muted); }
 
 .receipt-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
   padding: 1.25rem;
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
 }
 
-.section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.section-heading {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
 .heading-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+h2 { margin: 0; font-size: 1.1rem; }
+
+.view-toggle,
 .fs-toggle {
   appearance: none;
   padding: 0.45rem 0.85rem;
@@ -51,41 +79,21 @@ h1 { margin: 1.25rem 0 0.25rem; font-size: clamp(1.6rem, 4vw, 2.2rem); }
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
+.view-toggle:hover,
 .fs-toggle:hover {
   background: var(--bg-hover);
   border-color: #42618c;
 }
-/* Fullscreen: use more of the viewport */
-:fullscreen .receipts-page,
-:-webkit-full-screen .receipts-page {
-  max-width: none;
-  min-height: 100vh;
-  padding: 1.25rem 1.5rem 2rem;
-  background: var(--bg);
-}
-:fullscreen body,
-:-webkit-full-screen body {
-  background: var(--bg);
-}
-h2 { margin: 0; font-size: 1.1rem; }
-.view-toggle {
-  appearance: none;
-  padding: 0.45rem 0.85rem;
-  color: var(--text);
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font: inherit;
+
+.search-label {
+  display: block;
+  flex: 0 0 auto;
+  margin-bottom: 0.4rem;
+  color: var(--text-muted);
   font-size: 0.85rem;
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
 }
-.view-toggle:hover {
-  background: var(--bg-hover);
-  border-color: #42618c;
-}
-.search-label { display: block; margin-bottom: 0.4rem; color: var(--text-muted); font-size: 0.85rem; }
 .search-input {
+  flex: 0 0 auto;
   width: 100%;
   padding: 0.75rem 0.9rem;
   color: var(--text);
@@ -96,12 +104,19 @@ h2 { margin: 0; font-size: 1.1rem; }
 }
 .search-input:focus { outline: 2px solid rgba(59, 130, 246, 0.55); outline-offset: 1px; border-color: var(--accent); }
 
+/* Only the PDF grid scrolls */
 .receipt-list {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: start;
   gap: 0.85rem;
+  flex: 1 1 auto;
+  min-height: 0;
   margin-top: 1rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  -webkit-overflow-scrolling: touch;
 }
 
 .receipt-card {
@@ -143,10 +158,31 @@ h2 { margin: 0; font-size: 1.1rem; }
   background: var(--bg-card);
 }
 
-.empty-state { margin: 1.25rem 0 0; color: var(--text-muted); text-align: center; grid-column: 1 / -1; }
-.page-footer { padding-top: 1.5rem; color: var(--text-muted); font-size: 0.85rem; text-align: center; }
+.empty-state {
+  flex: 0 0 auto;
+  margin: 1.25rem 0 0;
+  color: var(--text-muted);
+  text-align: center;
+  grid-column: 1 / -1;
+}
+
+.page-footer {
+  flex: 0 0 auto;
+  padding-top: 0.85rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+:fullscreen .receipts-page,
+:-webkit-full-screen .receipts-page {
+  max-width: none;
+  height: 100%;
+  padding: 1.25rem 1.5rem 1rem;
+  background: var(--bg);
+}
 
 @media (max-width: 480px) {
-  .receipts-page { padding: 1.25rem 0.85rem 2rem; }
+  .receipts-page { padding: 1rem 0.85rem 0.75rem; }
   .receipt-section { padding: 1rem; }
 }
