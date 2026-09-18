@@ -1,37 +1,32 @@
 /**
  * 美股收市助手 — 最新交易日資料（schemaVersion 1）
- * 與 data/stocks-latest.json 內容相同，掛到 window.STOCKS_SESSION。
  */
 window.STOCKS_SESSION = {
   "schemaVersion": 1,
-  "sessionDate": "2026-09-16",
+  "sessionDate": "2026-09-17",
   "sessionLabel": "美東常規時段",
   "timezoneNote": "價位為該交易日收市；摘要通常喺香港翌朝交",
   "currency": "USD",
-  "source": "Yahoo Finance；股數已 reset 為各 10 股",
-  "generatedAt": "2026-09-17T09:23:00+08:00",
+  "source": "Yahoo Finance chart",
+  "generatedAt": "2026-09-18T08:12:00+08:00",
   "holdings": [
     {
       "ticker": "TSLA",
       "name": "Tesla",
       "shares": 10,
-      "close": 358.08,
-      "change": 1.5,
-      "changePct": 0.42,
-      "dayLow": 354.89,
-      "dayHigh": 365.05,
-      "volume": 32040000,
-      "avgVolume20": 39110000,
-      "volumeVsAvg": 0.82,
-      "positionValue": 3580.8,
+      "close": 366.2,
+      "change": 8.12,
+      "changePct": 2.27,
+      "dayLow": 363.22,
+      "dayHigh": 374.12,
+      "volume": 38770658,
+      "avgVolume20": 39419128,
+      "volumeVsAvg": 0.98,
+      "positionValue": 3662.0,
       "news": [
         {
-          "headline": "NHTSA orders Tesla to answer Cybercab self-certification questions by Sep 30",
-          "url": "https://www.channelnewsasia.com/business/us-agency-orders-tesla-answer-questions-cybercab-certification-6386996"
-        },
-        {
-          "headline": "Tesla deploys first preassembled Accordion Supercharger (16 stalls, ~20% cheaper install)",
-          "url": "https://electrek.co/2026/09/16/tesla-accordion-supercharger-deployment/"
+          "headline": "Tesla signed as charging operator for Forum Mobility's next three California freight depots (~30MW)",
+          "url": ""
         }
       ]
     },
@@ -39,23 +34,23 @@ window.STOCKS_SESSION = {
       "ticker": "NVDA",
       "name": "NVIDIA",
       "shares": 10,
-      "close": 213.9,
-      "change": 1.73,
-      "changePct": 0.82,
-      "dayLow": 212.5,
-      "dayHigh": 216.76,
-      "volume": 96110000,
-      "avgVolume20": 130270000,
-      "volumeVsAvg": 0.74,
-      "positionValue": 2139.0,
+      "close": 219.34,
+      "change": 5.44,
+      "changePct": 2.54,
+      "dayLow": 217.15,
+      "dayHigh": 219.9,
+      "volume": 92845751,
+      "avgVolume20": 129741593,
+      "volumeVsAvg": 0.72,
+      "positionValue": 2193.4,
       "news": [
         {
-          "headline": "Vera Rubin NVL72 preview: up to 3.7× GB300 throughput in MLPerf Inference v6.1",
-          "url": "https://blogs.nvidia.com/blog/vera-rubin-nvl72-mlperf-inference/"
+          "headline": "Jensen Huang says Nvidia will sell twice as many chips next year",
+          "url": ""
         },
         {
-          "headline": "NVIDIA, Google, Emerald AI launch AI Energy Management Alliance",
-          "url": "https://blogs.nvidia.com/blog/ai-energy-management-alliance/"
+          "headline": "Lucid–Bolt robotaxi plan cites Nvidia Hyperion AV architecture",
+          "url": ""
         }
       ]
     },
@@ -63,22 +58,22 @@ window.STOCKS_SESSION = {
       "ticker": "LCID",
       "name": "Lucid",
       "shares": 10,
-      "close": 4.04,
-      "change": -0.08,
-      "changePct": -1.94,
-      "dayLow": 3.94,
-      "dayHigh": 4.17,
-      "volume": 11840000,
-      "avgVolume20": 11950000,
-      "volumeVsAvg": 0.99,
-      "positionValue": 40.4,
+      "close": 4.28,
+      "change": 0.24,
+      "changePct": 5.94,
+      "dayLow": 4.195,
+      "dayHigh": 4.545,
+      "volume": 19895639,
+      "avgVolume20": 12704017,
+      "volumeVsAvg": 1.57,
+      "positionValue": 42.8,
       "news": [
         {
-          "headline": "Reports: Apple backend code lists Lucid among brands expected for Wallet Car Key (no official date)",
-          "url": "https://teslanorth.com/2026/09/16/lucid-apple-car-key-code/"
+          "headline": "Lucid–Bolt deal for at least 25,000 robotaxis in Europe",
+          "url": ""
         }
       ]
     }
   ],
-  "portfolioTotal": 5760.2
+  "portfolioTotal": 5898.2
 };
