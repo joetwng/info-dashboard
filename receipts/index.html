@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>STAR 收據一覽</title>
-    <link rel="stylesheet" href="receipts.css?v=202609181648" />
+    <link rel="stylesheet" href="receipts.css?v=202609181651" />
   </head>
   <body>
     <main class="receipts-page">
@@ -80,6 +80,32 @@
       document.addEventListener("fullscreenchange", updateFsLabel);
       document.addEventListener("webkitfullscreenchange", updateFsLabel);
       updateFsLabel();
+
+      const receiptScroll = document.querySelector(".receipt-scroll");
+      let scrollIdleTimer = null;
+      const SCROLL_IDLE_MS = 5000;
+
+      function scrollReceiptsToTop() {
+        if (!receiptScroll) return;
+        receiptScroll.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function armScrollIdleReturn() {
+        if (!receiptScroll) return;
+        if (scrollIdleTimer) clearTimeout(scrollIdleTimer);
+        scrollIdleTimer = setTimeout(function () {
+          if (receiptScroll.scrollTop > 0) {
+            scrollReceiptsToTop();
+          }
+        }, SCROLL_IDLE_MS);
+      }
+
+      if (receiptScroll) {
+        receiptScroll.addEventListener("scroll", armScrollIdleReturn, { passive: true });
+        receiptScroll.addEventListener("wheel", armScrollIdleReturn, { passive: true });
+        receiptScroll.addEventListener("touchmove", armScrollIdleReturn, { passive: true });
+      }
+
 
       let receipts = [];
       let viewMode = localStorage.getItem(VIEW_KEY) === "printed" ? "printed" : "unprinted";
@@ -181,7 +207,7 @@
           if (receipt.preview) {
             const img = document.createElement("img");
             img.className = "pdf-preview";
-            img.src = receipt.preview + "?v=202609181648";
+            img.src = receipt.preview + "?v=202609181651";
             img.alt = receipt.title || receipt.name || "Receipt preview";
             img.loading = "lazy";
             img.draggable = false;
@@ -211,7 +237,7 @@
 
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=202609181648")
+      fetch("manifest.json?v=202609181651")
         .then((response) => {
           if (!response.ok) throw new Error("Manifest request failed: " + response.status);
           return response.json();
