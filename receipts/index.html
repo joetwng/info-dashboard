@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>STAR 收據一覽</title>
-    <link rel="stylesheet" href="receipts.css?v=202609181530" />
+    <link rel="stylesheet" href="receipts.css?v=202609181533" />
   </head>
   <body>
     <main class="receipts-page">
       <header class="page-header">
         <a class="back-link" href="../">← 返回資訊分享儀表板</a>
         <h1>STAR 收據一覽</h1>
-        <p class="subtitle">已收集的 STAR 收據 PDF（預覽內容；點擊開啟完整 PDF）</p>
+        <p class="subtitle">已收集的 STAR 收據 PDF（預覽內容）</p>
       </header>
 
       <section class="receipt-section" aria-labelledby="receipt-heading">
@@ -56,35 +56,32 @@
         receiptCount.textContent = matches.length + " / " + receipts.length;
 
         matches.forEach((receipt) => {
-          const link = document.createElement("a");
-          link.className = "receipt-card";
-          link.href = receipt.file;
-          link.target = "_blank";
-          link.rel = "noopener";
-          link.title = receipt.name || receipt.title || "Open PDF";
-          link.setAttribute("aria-label", "Open " + (receipt.name || "receipt PDF"));
+          const card = document.createElement("div");
+          card.className = "receipt-card";
+          card.title = receipt.name || receipt.title || "";
 
           if (receipt.preview) {
             const img = document.createElement("img");
             img.className = "pdf-preview";
-            img.src = receipt.preview + "?v=202609181530";
+            img.src = receipt.preview + "?v=202609181533";
             img.alt = receipt.title || receipt.name || "Receipt preview";
             img.loading = "lazy";
-            link.appendChild(img);
+            img.draggable = false;
+            card.appendChild(img);
           } else {
             const fallback = document.createElement("div");
             fallback.className = "pdf-fallback";
             fallback.textContent = receipt.name || "PDF";
-            link.appendChild(fallback);
+            card.appendChild(fallback);
           }
 
-          receiptList.appendChild(link);
+          receiptList.appendChild(card);
         });
       }
 
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=202609181530")
+      fetch("manifest.json?v=202609181533")
         .then((response) => {
           if (!response.ok) throw new Error("Manifest request failed: " + response.status);
           return response.json();
