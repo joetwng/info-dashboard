@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>STAR 收據一覽</title>
-    <link rel="stylesheet" href="receipts.css?v=202609181646" />
+    <link rel="stylesheet" href="receipts.css?v=202609181648" />
   </head>
   <body>
     <main class="receipts-page">
@@ -30,7 +30,9 @@
           placeholder="例如：2748"
           autocomplete="off"
         />
+        <div class="receipt-scroll">
         <div id="receipt-list" class="receipt-list" aria-live="polite"></div>
+        </div>
         <p id="empty-state" class="empty-state" hidden>找不到符合的收據。</p>
       </section>
 
@@ -179,7 +181,7 @@
           if (receipt.preview) {
             const img = document.createElement("img");
             img.className = "pdf-preview";
-            img.src = receipt.preview + "?v=202609181646";
+            img.src = receipt.preview + "?v=202609181648";
             img.alt = receipt.title || receipt.name || "Receipt preview";
             img.loading = "lazy";
             img.draggable = false;
@@ -209,7 +211,7 @@
 
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=202609181646")
+      fetch("manifest.json?v=202609181648")
         .then((response) => {
           if (!response.ok) throw new Error("Manifest request failed: " + response.status);
           return response.json();
