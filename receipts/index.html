@@ -20,14 +20,16 @@
 </header>
 
       <section class="receipt-section" aria-label="收據">
-        <label class="search-label" for="receipt-search">搜尋檔案名稱</label>
-        <input
-          id="receipt-search"
-          class="search-input"
-          type="search"
-          placeholder="例如：2748"
-          autocomplete="off"
-        />
+        <div class="search-row">
+          <label class="search-label" for="receipt-search">搜尋檔案名稱</label>
+          <input
+            id="receipt-search"
+            class="search-input"
+            type="search"
+            placeholder="例如：2748"
+            autocomplete="off"
+          />
+        </div>
         <div class="receipt-scroll">
         <div id="receipt-list" class="receipt-list" aria-live="polite"></div>
         </div>
