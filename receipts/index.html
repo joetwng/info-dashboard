@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>STAR 收據一覽</title>
-    <link rel="stylesheet" href="receipts.css?v=202609181528" />
+    <link rel="stylesheet" href="receipts.css?v=202609181529" />
   </head>
   <body>
     <main class="receipts-page">
       <header class="page-header">
         <a class="back-link" href="../">← 返回資訊分享儀表板</a>
         <h1>STAR 收據一覽</h1>
-        <p class="subtitle">已收集的 STAR 收據 PDF</p>
+        <p class="subtitle">已收集的 STAR 收據 PDF（預覽內容；點擊開啟完整 PDF）</p>
       </header>
 
       <section class="receipt-section" aria-labelledby="receipt-heading">
@@ -24,7 +24,7 @@
           id="receipt-search"
           class="search-input"
           type="search"
-          placeholder="例如：K1-0667"
+          placeholder="例如：2748"
           autocomplete="off"
         />
         <div id="receipt-list" class="receipt-list" aria-live="polite"></div>
@@ -37,14 +37,7 @@
     </main>
 
     <script>
-      const fallbackManifest = [
-        {
-          name: "K1-0667-PICKUP.pdf",
-          file: "pdfs/K1-0667-PICKUP.pdf",
-          title: "K1-0667 PICKUP",
-          mac: "00:11:62:42:79:1c"
-        }
-      ];
+      const fallbackManifest = [];
       const searchInput = document.getElementById("receipt-search");
       const receiptList = document.getElementById("receipt-list");
       const emptyState = document.getElementById("empty-state");
@@ -54,12 +47,13 @@
       function renderReceipts() {
         const query = searchInput.value.trim().toLocaleLowerCase();
         const matches = receipts.filter((receipt) =>
-          receipt.name.toLocaleLowerCase().includes(query)
+          (receipt.name || "").toLocaleLowerCase().includes(query) ||
+          (receipt.title || "").toLocaleLowerCase().includes(query)
         );
 
         receiptList.replaceChildren();
         emptyState.hidden = matches.length !== 0;
-        receiptCount.textContent = `${matches.length} / ${receipts.length}`;
+        receiptCount.textContent = ;
 
         matches.forEach((receipt) => {
           const link = document.createElement("a");
@@ -67,33 +61,32 @@
           link.href = receipt.file;
           link.target = "_blank";
           link.rel = "noopener";
-          link.innerHTML = `
-            <span class="file-icon" aria-hidden="true">PDF</span>
-            <span class="receipt-details">
-              <strong>${escapeHtml(receipt.title || receipt.name)}</strong>
-              <span>${escapeHtml(receipt.name)}</span>
-              ${receipt.mac ? `<small>MAC：${escapeHtml(receipt.mac)}</small>` : ""}
-            </span>
-            <span class="open-icon" aria-hidden="true">↗</span>
-          `;
+          link.title = receipt.name || receipt.title || "Open PDF";
+          link.setAttribute("aria-label", "Open " + (receipt.name || "receipt PDF"));
+
+          if (receipt.preview) {
+            const img = document.createElement("img");
+            img.className = "pdf-preview";
+            img.src = receipt.preview + "?v=202609181529";
+            img.alt = receipt.title || receipt.name || "Receipt preview";
+            img.loading = "lazy";
+            link.appendChild(img);
+          } else {
+            const fallback = document.createElement("div");
+            fallback.className = "pdf-fallback";
+            fallback.textContent = receipt.name || "PDF";
+            link.appendChild(fallback);
+          }
+
           receiptList.appendChild(link);
         });
       }
 
-      function escapeHtml(value) {
-        return String(value)
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("'", "&#039;");
-      }
-
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=202609181528")
+      fetch("manifest.json?v=202609181529")
         .then((response) => {
-          if (!response.ok) throw new Error(`Manifest request failed: ${response.status}`);
+          if (!response.ok) throw new Error("Manifest request failed: " + response.status);
           return response.json();
         })
         .catch(() => fallbackManifest)
