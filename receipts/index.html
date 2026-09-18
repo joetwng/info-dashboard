@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>STAR 收據一覽</title>
-    <link rel="stylesheet" href="receipts.css?v=" />
+    <link rel="stylesheet" href="receipts.css?v=202609181655" />
   </head>
   <body>
     <main class="receipts-page">
@@ -83,56 +83,28 @@
 
 
       const receiptScroll = document.querySelector(".receipt-scroll");
-      let scrollEndTimer = null;
-      let holding = false;
-      const SCROLL_END_MS = 120;
+      let scrollIdleTimer = null;
+      const SCROLL_IDLE_MS = 2000;
 
       function scrollReceiptsToTop() {
         if (!receiptScroll) return;
         receiptScroll.scrollTo({ top: 0, behavior: "smooth" });
       }
 
-      function maybeReturnToTop() {
+      function armScrollIdleReturn() {
         if (!receiptScroll) return;
-        if (holding) return;
-        if (receiptScroll.scrollTop > 0) {
-          scrollReceiptsToTop();
-        }
-      }
-
-      function onScrollActivity() {
-        if (!receiptScroll) return;
-        if (scrollEndTimer) clearTimeout(scrollEndTimer);
-        scrollEndTimer = setTimeout(function () {
-          maybeReturnToTop();
-        }, SCROLL_END_MS);
-      }
-
-      function setHolding(next) {
-        holding = next;
-        if (!holding) {
-          // Finger/pointer released: return as soon as scrolling has settled
-          onScrollActivity();
-        } else if (scrollEndTimer) {
-          clearTimeout(scrollEndTimer);
-          scrollEndTimer = null;
-        }
+        if (scrollIdleTimer) clearTimeout(scrollIdleTimer);
+        scrollIdleTimer = setTimeout(function () {
+          if (receiptScroll.scrollTop > 0) {
+            scrollReceiptsToTop();
+          }
+        }, SCROLL_IDLE_MS);
       }
 
       if (receiptScroll) {
-        receiptScroll.addEventListener("scroll", onScrollActivity, { passive: true });
-        receiptScroll.addEventListener("wheel", onScrollActivity, { passive: true });
-
-        receiptScroll.addEventListener("touchstart", function () { setHolding(true); }, { passive: true });
-        receiptScroll.addEventListener("touchend", function () { setHolding(false); }, { passive: true });
-        receiptScroll.addEventListener("touchcancel", function () { setHolding(false); }, { passive: true });
-
-        receiptScroll.addEventListener("pointerdown", function (e) {
-          if (e.pointerType === "touch" || e.pointerType === "pen" || e.buttons > 0) setHolding(true);
-        }, { passive: true });
-        receiptScroll.addEventListener("pointerup", function () { setHolding(false); }, { passive: true });
-        receiptScroll.addEventListener("pointercancel", function () { setHolding(false); }, { passive: true });
-        window.addEventListener("blur", function () { setHolding(false); });
+        receiptScroll.addEventListener("scroll", armScrollIdleReturn, { passive: true });
+        receiptScroll.addEventListener("wheel", armScrollIdleReturn, { passive: true });
+        receiptScroll.addEventListener("touchmove", armScrollIdleReturn, { passive: true });
       }
 
 
@@ -267,7 +239,7 @@
 
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=")
+      fetch("manifest.json?v=202609181655")
         .then((response) => {
           if (!response.ok) throw new Error("Manifest request failed: " + response.status);
           return response.json();
