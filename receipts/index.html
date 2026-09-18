@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>STAR 收據一覽</title>
-    <link rel="stylesheet" href="receipts.css?v=202609181651" />
+    <link rel="stylesheet" href="receipts.css?v=" />
   </head>
   <body>
     <main class="receipts-page">
@@ -81,30 +81,60 @@
       document.addEventListener("webkitfullscreenchange", updateFsLabel);
       updateFsLabel();
 
+
       const receiptScroll = document.querySelector(".receipt-scroll");
-      let scrollIdleTimer = null;
-      const SCROLL_IDLE_MS = 5000;
+      let scrollEndTimer = null;
+      let holding = false;
+      const SCROLL_END_MS = 120;
 
       function scrollReceiptsToTop() {
         if (!receiptScroll) return;
         receiptScroll.scrollTo({ top: 0, behavior: "smooth" });
       }
 
-      function armScrollIdleReturn() {
+      function maybeReturnToTop() {
         if (!receiptScroll) return;
-        if (scrollIdleTimer) clearTimeout(scrollIdleTimer);
-        scrollIdleTimer = setTimeout(function () {
-          if (receiptScroll.scrollTop > 0) {
-            scrollReceiptsToTop();
-          }
-        }, SCROLL_IDLE_MS);
+        if (holding) return;
+        if (receiptScroll.scrollTop > 0) {
+          scrollReceiptsToTop();
+        }
+      }
+
+      function onScrollActivity() {
+        if (!receiptScroll) return;
+        if (scrollEndTimer) clearTimeout(scrollEndTimer);
+        scrollEndTimer = setTimeout(function () {
+          maybeReturnToTop();
+        }, SCROLL_END_MS);
+      }
+
+      function setHolding(next) {
+        holding = next;
+        if (!holding) {
+          // Finger/pointer released: return as soon as scrolling has settled
+          onScrollActivity();
+        } else if (scrollEndTimer) {
+          clearTimeout(scrollEndTimer);
+          scrollEndTimer = null;
+        }
       }
 
       if (receiptScroll) {
-        receiptScroll.addEventListener("scroll", armScrollIdleReturn, { passive: true });
-        receiptScroll.addEventListener("wheel", armScrollIdleReturn, { passive: true });
-        receiptScroll.addEventListener("touchmove", armScrollIdleReturn, { passive: true });
+        receiptScroll.addEventListener("scroll", onScrollActivity, { passive: true });
+        receiptScroll.addEventListener("wheel", onScrollActivity, { passive: true });
+
+        receiptScroll.addEventListener("touchstart", function () { setHolding(true); }, { passive: true });
+        receiptScroll.addEventListener("touchend", function () { setHolding(false); }, { passive: true });
+        receiptScroll.addEventListener("touchcancel", function () { setHolding(false); }, { passive: true });
+
+        receiptScroll.addEventListener("pointerdown", function (e) {
+          if (e.pointerType === "touch" || e.pointerType === "pen" || e.buttons > 0) setHolding(true);
+        }, { passive: true });
+        receiptScroll.addEventListener("pointerup", function () { setHolding(false); }, { passive: true });
+        receiptScroll.addEventListener("pointercancel", function () { setHolding(false); }, { passive: true });
+        window.addEventListener("blur", function () { setHolding(false); });
       }
+
 
 
       let receipts = [];
@@ -207,7 +237,7 @@
           if (receipt.preview) {
             const img = document.createElement("img");
             img.className = "pdf-preview";
-            img.src = receipt.preview + "?v=202609181651";
+            img.src = receipt.preview + "?v=";
             img.alt = receipt.title || receipt.name || "Receipt preview";
             img.loading = "lazy";
             img.draggable = false;
@@ -237,7 +267,7 @@
 
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=202609181651")
+      fetch("manifest.json?v=")
         .then((response) => {
           if (!response.ok) throw new Error("Manifest request failed: " + response.status);
           return response.json();
