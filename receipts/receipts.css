@@ -122,6 +122,7 @@ h2 { margin: 0; font-size: 1.1rem; }
   flex: 0 0 auto;
   align-items: center;
   gap: 0.75rem;
+  justify-content: flex-start;
 }
 .search-row .search-label {
   display: inline-block;
@@ -132,7 +133,13 @@ h2 { margin: 0; font-size: 1.1rem; }
 .search-row .search-input {
   flex: 1 1 auto;
   min-width: 0;
+  width: auto;
 }
+.search-row .heading-actions {
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
 
 
 /* Scroll wrapper — NOT the grid itself (avoids column overlap bugs) */

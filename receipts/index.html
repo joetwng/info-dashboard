@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>STAR 收據一覽</title>
-    <link rel="stylesheet" href="receipts.css?v=202609181658" />
+    <link rel="stylesheet" href="receipts.css?v=202609181700" />
   </head>
   <body>
     <main class="receipts-page">
@@ -12,10 +12,6 @@
         <a class="back-link" href="../">← 返回資訊分享儀表板</a>
         <div class="title-row">
           <h1>STAR 收據一覽</h1>
-          <div class="heading-actions">
-            <button type="button" id="view-toggle" class="view-toggle">Show Printed</button>
-            <button type="button" id="fs-toggle" class="fs-toggle">Full screen</button>
-          </div>
         </div>
 </header>
 
@@ -29,6 +25,10 @@
             placeholder="例如：2748"
             autocomplete="off"
           />
+          <div class="heading-actions">
+            <button type="button" id="view-toggle" class="view-toggle">Show Printed</button>
+            <button type="button" id="fs-toggle" class="fs-toggle">Full screen</button>
+          </div>
         </div>
         <div class="receipt-scroll">
         <div id="receipt-list" class="receipt-list" aria-live="polite"></div>
@@ -239,7 +239,7 @@
 
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=202609181658")
+      fetch("manifest.json?v=202609181700")
         .then((response) => {
           if (!response.ok) throw new Error("Manifest request failed: " + response.status);
           return response.json();
