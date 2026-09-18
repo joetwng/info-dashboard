@@ -38,6 +38,35 @@ h1 { margin: 1.25rem 0 0.25rem; font-size: clamp(1.6rem, 4vw, 2.2rem); }
 }
 
 .section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.heading-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.fs-toggle {
+  appearance: none;
+  padding: 0.45rem 0.85rem;
+  color: var(--text);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.fs-toggle:hover {
+  background: var(--bg-hover);
+  border-color: #42618c;
+}
+/* Fullscreen: use more of the viewport */
+:fullscreen .receipts-page,
+:-webkit-full-screen .receipts-page {
+  max-width: none;
+  min-height: 100vh;
+  padding: 1.25rem 1.5rem 2rem;
+  background: var(--bg);
+}
+:fullscreen body,
+:-webkit-full-screen body {
+  background: var(--bg);
+}
 h2 { margin: 0; font-size: 1.1rem; }
 .view-toggle {
   appearance: none;

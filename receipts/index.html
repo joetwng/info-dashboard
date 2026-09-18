@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>STAR 收據一覽</title>
-    <link rel="stylesheet" href="receipts.css?v=202609181545" />
+    <link rel="stylesheet" href="receipts.css?v=202609181555" />
   </head>
   <body>
     <main class="receipts-page">
@@ -17,7 +17,10 @@
       <section class="receipt-section" aria-labelledby="receipt-heading">
         <div class="section-heading">
           <h2 id="receipt-heading">收據</h2>
-          <button type="button" id="view-toggle" class="view-toggle">Show Printed</button>
+          <div class="heading-actions">
+            <button type="button" id="view-toggle" class="view-toggle">Show Printed</button>
+            <button type="button" id="fs-toggle" class="fs-toggle">Full screen</button>
+          </div>
         </div>
         <label class="search-label" for="receipt-search">搜尋檔案名稱</label>
         <input
@@ -44,6 +47,38 @@
       const receiptList = document.getElementById("receipt-list");
       const emptyState = document.getElementById("empty-state");
       const viewToggle = document.getElementById("view-toggle");
+
+      const fsToggle = document.getElementById("fs-toggle");
+
+      function isFullScreen() {
+        return !!(document.fullscreenElement || document.webkitFullscreenElement);
+      }
+
+      function updateFsLabel() {
+        fsToggle.textContent = isFullScreen() ? "Resume" : "Full screen";
+      }
+
+      async function toggleFullScreen() {
+        try {
+          if (!isFullScreen()) {
+            const el = document.documentElement;
+            if (el.requestFullscreen) await el.requestFullscreen();
+            else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+          } else {
+            if (document.exitFullscreen) await document.exitFullscreen();
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+          }
+        } catch (e) {
+          console.warn("Fullscreen failed", e);
+        }
+        updateFsLabel();
+      }
+
+      fsToggle.addEventListener("click", toggleFullScreen);
+      document.addEventListener("fullscreenchange", updateFsLabel);
+      document.addEventListener("webkitfullscreenchange", updateFsLabel);
+      updateFsLabel();
+
       let receipts = [];
       let viewMode = localStorage.getItem(VIEW_KEY) === "printed" ? "printed" : "unprinted";
 
@@ -144,7 +179,7 @@
           if (receipt.preview) {
             const img = document.createElement("img");
             img.className = "pdf-preview";
-            img.src = receipt.preview + "?v=202609181545";
+            img.src = receipt.preview + "?v=202609181555";
             img.alt = receipt.title || receipt.name || "Receipt preview";
             img.loading = "lazy";
             img.draggable = false;
@@ -174,7 +209,7 @@
 
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=202609181545")
+      fetch("manifest.json?v=202609181555")
         .then((response) => {
           if (!response.ok) throw new Error("Manifest request failed: " + response.status);
           return response.json();
