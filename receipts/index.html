@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>STAR 收據一覽</title>
-    <link rel="stylesheet" href="receipts.css?v=202609181539" />
+    <link rel="stylesheet" href="receipts.css?v=202609181542" />
   </head>
   <body>
     <main class="receipts-page">
       <header class="page-header">
         <a class="back-link" href="../">← 返回資訊分享儀表板</a>
         <h1>STAR 收據一覽</h1>
-        <p class="subtitle">雙擊預覽標記為已列印（PRT_）</p>
+        <p class="subtitle">雙擊預覽：無 PRT_ 則加上並隱藏；有 PRT_ 則移除。之後會重新整理</p>
       </header>
 
       <section class="receipt-section" aria-labelledby="receipt-heading">
@@ -38,14 +38,14 @@
 
     <script>
       const STORAGE_KEY = "star-receipts-prt-names";
+      const VIEW_KEY = "star-receipts-view-mode";
       const fallbackManifest = [];
       const searchInput = document.getElementById("receipt-search");
       const receiptList = document.getElementById("receipt-list");
       const emptyState = document.getElementById("empty-state");
       const viewToggle = document.getElementById("view-toggle");
       let receipts = [];
-      // "unprinted" = no PRT_, ascending; "printed" = PRT_, descending
-      let viewMode = "unprinted";
+      let viewMode = localStorage.getItem(VIEW_KEY) === "printed" ? "printed" : "unprinted";
 
       function loadPrintedNames() {
         try {
@@ -61,45 +61,69 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(set)));
       }
 
+      function baseName(name) {
+        if (!name) return "";
+        return name.startsWith("PRT_") ? name.slice(4) : name;
+      }
+
       function isPrinted(name, printedSet) {
         if (!name) return false;
-        if (name.startsWith("PRT_")) return true;
-        if (printedSet.has(name)) return true;
-        if (printedSet.has("PRT_" + name)) return true;
-        return false;
+        const base = baseName(name);
+        if (name.startsWith("PRT_")) {
+          // File already has PRT_ unless explicitly unmarked
+          return !printedSet.has("UNPRT_" + base);
+        }
+        return printedSet.has(base) || printedSet.has("PRT_" + base);
+      }
+
+      function togglePrinted(name) {
+        if (!name) return;
+        const set = loadPrintedNames();
+        const base = baseName(name);
+        if (isPrinted(name, set)) {
+          // Remove PRT_: clear printed marks; if real filename has PRT_, mark UNPRT_ override
+          set.delete(base);
+          set.delete("PRT_" + base);
+          if (name.startsWith("PRT_")) {
+            set.add("UNPRT_" + base);
+          }
+        } else {
+          // Add PRT_
+          set.delete("UNPRT_" + base);
+          set.add(base);
+          set.add("PRT_" + base);
+        }
+        savePrintedNames(set);
       }
 
       function updateToggleLabel() {
-        // Button shows the other view you can switch to
         viewToggle.textContent = viewMode === "unprinted" ? "Show Printed" : "Show Un-Print";
       }
 
       function visibleReceipts(printedSet) {
         const query = searchInput.value.trim().toLocaleLowerCase();
         const wantPrinted = viewMode === "printed";
-        const list = receipts
+        return receipts
           .filter((receipt) => isPrinted(receipt.name, printedSet) === wantPrinted)
           .filter((receipt) => {
             const name = (receipt.name || "").toLocaleLowerCase();
             const title = (receipt.title || "").toLocaleLowerCase();
-            return name.includes(query) || title.includes(query);
+            const base = baseName(receipt.name || "").toLocaleLowerCase();
+            return name.includes(query) || title.includes(query) || base.includes(query);
           })
           .slice()
           .sort(function (a, b) {
             const ac = a.createdAt || "";
             const bc = b.createdAt || "";
             if (wantPrinted) {
-              // descending
               if (ac < bc) return 1;
               if (ac > bc) return -1;
             } else {
-              // ascending
               if (ac < bc) return -1;
               if (ac > bc) return 1;
             }
             return (a.name || "").localeCompare(b.name || "");
           });
-        return list;
       }
 
       function renderReceipts() {
@@ -113,13 +137,14 @@
         matches.forEach((receipt) => {
           const card = document.createElement("div");
           card.className = "receipt-card";
-          card.title = (receipt.name || "") + (viewMode === "unprinted" ? "（雙擊標記為 PRT_）" : "");
+          const printed = isPrinted(receipt.name, printedSet);
+          card.title = (receipt.name || "") + (printed ? "（雙擊移除 PRT_）" : "（雙擊加上 PRT_）");
           card.dataset.name = receipt.name || "";
 
           if (receipt.preview) {
             const img = document.createElement("img");
             img.className = "pdf-preview";
-            img.src = receipt.preview + "?v=202609181539";
+            img.src = receipt.preview + "?v=202609181542";
             img.alt = receipt.title || receipt.name || "Receipt preview";
             img.loading = "lazy";
             img.draggable = false;
@@ -131,18 +156,11 @@
             card.appendChild(fallback);
           }
 
-          if (viewMode === "unprinted") {
-            card.addEventListener("dblclick", function (event) {
-              event.preventDefault();
-              const name = receipt.name;
-              if (!name || name.startsWith("PRT_")) return;
-              const set = loadPrintedNames();
-              set.add(name);
-              set.add("PRT_" + name);
-              savePrintedNames(set);
-              renderReceipts();
-            });
-          }
+          card.addEventListener("dblclick", function (event) {
+            event.preventDefault();
+            togglePrinted(receipt.name);
+            location.reload();
+          });
 
           receiptList.appendChild(card);
         });
@@ -150,12 +168,13 @@
 
       viewToggle.addEventListener("click", function () {
         viewMode = viewMode === "unprinted" ? "printed" : "unprinted";
+        localStorage.setItem(VIEW_KEY, viewMode);
         renderReceipts();
       });
 
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=202609181539")
+      fetch("manifest.json?v=202609181542")
         .then((response) => {
           if (!response.ok) throw new Error("Manifest request failed: " + response.status);
           return response.json();
