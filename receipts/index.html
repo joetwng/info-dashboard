@@ -4,12 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Kitchen Order</title>
-    <link rel="stylesheet" href="receipts.css?v=202609181705" />
+    <link rel="stylesheet" href="receipts.css?v=202609181708" />
   </head>
   <body>
     <main class="receipts-page">
       <header class="page-header">
-        <a class="back-link" href="../">← 返回資訊分享儀表板</a>
         <div class="title-row">
           <h1>Kitchen Order</h1>
           <div class="search-row">
@@ -35,11 +34,7 @@
         </div>
         <p id="empty-state" class="empty-state" hidden>找不到符合的收據。</p>
       </section>
-
-      <footer class="page-footer">
-        <a href="../">資訊分享儀表板</a>
-      </footer>
-    </main>
+</main>
 
     <script>
       const STORAGE_KEY = "star-receipts-prt-names";
@@ -239,7 +234,7 @@
 
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=202609181705")
+      fetch("manifest.json?v=202609181708")
         .then((response) => {
           if (!response.ok) throw new Error("Manifest request failed: " + response.status);
           return response.json();
