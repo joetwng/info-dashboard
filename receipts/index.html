@@ -4,15 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>STAR 收據一覽</title>
-    <link rel="stylesheet" href="receipts.css?v=202609181655" />
+    <link rel="stylesheet" href="receipts.css?v=202609181657" />
   </head>
   <body>
     <main class="receipts-page">
       <header class="page-header">
         <a class="back-link" href="../">← 返回資訊分享儀表板</a>
         <h1>STAR 收據一覽</h1>
-        <p class="subtitle">雙擊預覽：無 PRT_ 則加上並隱藏；有 PRT_ 則移除。之後會重新整理</p>
-      </header>
+</header>
 
       <section class="receipt-section" aria-labelledby="receipt-heading">
         <div class="section-heading">
@@ -239,7 +238,7 @@
 
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=202609181655")
+      fetch("manifest.json?v=202609181657")
         .then((response) => {
           if (!response.ok) throw new Error("Manifest request failed: " + response.status);
           return response.json();
