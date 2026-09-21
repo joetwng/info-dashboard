@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Kitchen Order</title>
-    <link rel="stylesheet" href="receipts.css?v=202609211449" />
+    <link rel="stylesheet" href="receipts.css?v=202609211450" />
   </head>
   <body>
     <main class="receipts-page">
@@ -112,6 +112,39 @@
         return cfg;
       }
 
+      async function fetchManifestNames() {
+        const res = await fetch("manifest.json?v=" + Date.now(), { cache: "no-store" });
+        if (!res.ok) throw new Error("manifest HTTP " + res.status);
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : [];
+        return list.map(function (item) { return item && item.name ? item.name : ""; }).filter(Boolean);
+      }
+
+      function sleep(ms) {
+        return new Promise(function (resolve) { window.setTimeout(resolve, ms); });
+      }
+
+      async function waitForNewReceipts(beforeNames, timeoutMs) {
+        const before = new Set(beforeNames);
+        const started = Date.now();
+        let latest = beforeNames.slice();
+        while (Date.now() - started < timeoutMs) {
+          await sleep(4000);
+          try {
+            latest = await fetchManifestNames();
+            const added = latest.filter(function (name) { return !before.has(name); });
+            if (added.length > 0) {
+              return { count: added.length, names: added, total: latest.length };
+            }
+          } catch (e) {
+            console.warn("poll manifest", e);
+          }
+        }
+        latest = await fetchManifestNames().catch(function () { return beforeNames.slice(); });
+        const added = latest.filter(function (name) { return !before.has(name); });
+        return { count: added.length, names: added, total: latest.length, timedOut: true };
+      }
+
       async function runExtract(forceConfig) {
         let cfg = forceConfig ? null : loadExtractCfg();
         if (!cfg) cfg = promptExtractCfg();
@@ -120,6 +153,12 @@
         const prev = extractBtn.textContent;
         extractBtn.disabled = true;
         extractBtn.textContent = "Extracting…";
+        let beforeNames = [];
+        try {
+          beforeNames = await fetchManifestNames();
+        } catch (e) {
+          beforeNames = (receipts || []).map(function (r) { return r.name; }).filter(Boolean);
+        }
         try {
           const headers = { "Content-Type": "application/json" };
           if (cfg.key) {
@@ -137,7 +176,20 @@
             mode: "cors",
           });
           if (!res.ok) throw new Error("HTTP " + res.status);
-          extractBtn.textContent = "Sent ✓";
+          extractBtn.textContent = "Waiting…";
+          const result = await waitForNewReceipts(beforeNames, 180000);
+          if (result.count > 0) {
+            extractBtn.textContent = "Received " + result.count;
+            window.alert(
+              "Received " + result.count + " receipt" + (result.count === 1 ? "" : "s") +
+              ":\n" + result.names.join("\n")
+            );
+            receipts = [];
+            location.reload();
+            return;
+          }
+          extractBtn.textContent = result.timedOut ? "0 new" : "Received 0";
+          window.alert("Received 0 receipts（呢次 drain 冇新檔，或清單尚未更新）。");
           window.setTimeout(function () {
             extractBtn.textContent = prev;
             extractBtn.disabled = false;
@@ -289,7 +341,7 @@
           if (receipt.preview) {
             const img = document.createElement("img");
             img.className = "pdf-preview";
-            img.src = receipt.preview + "?v=202609211449";
+            img.src = receipt.preview + "?v=202609211450";
             img.alt = receipt.title || receipt.name || "Receipt preview";
             img.loading = "lazy";
             img.draggable = false;
@@ -320,7 +372,7 @@
 
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=202609211449")
+      fetch("manifest.json?v=202609211450")
         .then((response) => {
           if (!response.ok) throw new Error("Manifest request failed: " + response.status);
           return response.json();
