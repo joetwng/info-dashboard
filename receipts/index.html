@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Kitchen Order</title>
-    <link rel="stylesheet" href="receipts.css?v=202609211450" />
+    <link rel="stylesheet" href="receipts.css?v=202609211453" />
   </head>
   <body>
     <main class="receipts-page">
@@ -98,7 +98,7 @@
       function promptExtractCfg() {
         const current = loadExtractCfg() || {};
         const url = window.prompt(
-          "Paste STAR「Execute once」webhook URL（喺 STAR TSP 143IV emulator → Routines 複製；只存呢部瀏覽器）",
+          "Paste STAR「Kitchen Order Execute once」Webhook URL（Routines 面板；只存本機瀏覽器）",
           current.url || ""
         );
         if (!url) return null;
@@ -111,6 +111,7 @@
         saveExtractCfg(cfg);
         return cfg;
       }
+
 
       async function fetchManifestNames() {
         const res = await fetch("manifest.json?v=" + Date.now(), { cache: "no-store" });
@@ -145,6 +146,51 @@
         return { count: added.length, names: added, total: latest.length, timedOut: true };
       }
 
+      function buildWebhookRequest(cfg) {
+        let url = cfg.url;
+        const key = (cfg.key || "").trim();
+        // Prefer key in query to avoid CORS preflight (Authorization triggers preflight).
+        if (key && url.indexOf("key=") === -1 && url.indexOf("token=") === -1) {
+          url += (url.indexOf("?") >= 0 ? "&" : "?") + "key=" + encodeURIComponent(key);
+        }
+        const body = JSON.stringify({
+          action: "drain",
+          mac: "00:11:62:42:79:1c",
+          source: "kitchen-order-extract-button",
+        });
+        return { url: url, body: body, key: key };
+      }
+
+      async function postWebhook(cfg) {
+        const req = buildWebhookRequest(cfg);
+        // 1) Simple-ish CORS attempt without custom auth headers
+        try {
+          const res = await fetch(req.url, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=UTF-8" },
+            body: req.body,
+            mode: "cors",
+          });
+          if (res.ok || res.type === "opaque") return { ok: true, mode: "cors" };
+          // some webhooks return 2xx only; 401 means URL reached but key wrong
+          if (res.status === 401 || res.status === 403) {
+            throw new Error("Webhook rejected auth (HTTP " + res.status + "). Check sender key.");
+          }
+          // continue to fallback for other statuses
+        } catch (e) {
+          if (e && /Webhook rejected auth/.test(e.message)) throw e;
+          console.warn("cors post failed, trying no-cors", e);
+        }
+        // 2) no-cors fire-and-forget (cannot read status; still often delivers)
+        await fetch(req.url, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=UTF-8" },
+          body: req.body,
+          mode: "no-cors",
+        });
+        return { ok: true, mode: "no-cors" };
+      }
+
       async function runExtract(forceConfig) {
         let cfg = forceConfig ? null : loadExtractCfg();
         if (!cfg) cfg = promptExtractCfg();
@@ -160,36 +206,24 @@
           beforeNames = (receipts || []).map(function (r) { return r.name; }).filter(Boolean);
         }
         try {
-          const headers = { "Content-Type": "application/json" };
-          if (cfg.key) {
-            headers["Authorization"] = "Bearer " + cfg.key;
-            headers["X-Webhook-Key"] = cfg.key;
-          }
-          const res = await fetch(cfg.url, {
-            method: "POST",
-            headers: headers,
-            body: JSON.stringify({
-              action: "drain",
-              mac: "00:11:62:42:79:1c",
-              source: "kitchen-order-extract-button",
-            }),
-            mode: "cors",
-          });
-          if (!res.ok) throw new Error("HTTP " + res.status);
+          await postWebhook(cfg);
           extractBtn.textContent = "Waiting…";
           const result = await waitForNewReceipts(beforeNames, 180000);
           if (result.count > 0) {
             extractBtn.textContent = "Received " + result.count;
             window.alert(
               "Received " + result.count + " receipt" + (result.count === 1 ? "" : "s") +
-              ":\n" + result.names.join("\n")
+              ":\\n" + result.names.join("\\n")
             );
-            receipts = [];
             location.reload();
             return;
           }
           extractBtn.textContent = result.timedOut ? "0 new" : "Received 0";
-          window.alert("Received 0 receipts（呢次 drain 冇新檔，或清單尚未更新）。");
+          window.alert(
+            "Received 0 receipts。\\n" +
+            "可能：queue 係空、webhook URL／key 錯、或 STAR 未寫入／未部署。\\n" +
+            "Shift＋撳 Extract 可重設 URL／key。"
+          );
           window.setTimeout(function () {
             extractBtn.textContent = prev;
             extractBtn.disabled = false;
@@ -198,8 +232,8 @@
           console.warn("Extract failed", e);
           extractBtn.textContent = "Failed";
           window.alert(
-            "Extract 送唔出（可能係 CORS／URL／key）。\n可 Shift+撳 Extract 重新貼 webhook。\n錯誤：" +
-              (e && e.message ? e.message : e)
+            "Extract 失敗：\\n" + (e && e.message ? e.message : e) +
+            "\\n\\nShift＋撳 Extract 重新貼 STAR「Kitchen Order Execute once」webhook URL＋key。"
           );
           window.setTimeout(function () {
             extractBtn.textContent = prev;
@@ -341,7 +375,7 @@
           if (receipt.preview) {
             const img = document.createElement("img");
             img.className = "pdf-preview";
-            img.src = receipt.preview + "?v=202609211450";
+            img.src = receipt.preview + "?v=202609211453";
             img.alt = receipt.title || receipt.name || "Receipt preview";
             img.loading = "lazy";
             img.draggable = false;
@@ -372,7 +406,7 @@
 
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=202609211450")
+      fetch("manifest.json?v=202609211453")
         .then((response) => {
           if (!response.ok) throw new Error("Manifest request failed: " + response.status);
           return response.json();
