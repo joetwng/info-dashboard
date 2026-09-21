@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Kitchen Order</title>
-    <link rel="stylesheet" href="receipts.css?v=$V" />
+    <link rel="stylesheet" href="receipts.css?v=202609211449" />
   </head>
   <body>
     <main class="receipts-page">
@@ -98,7 +98,7 @@
       function promptExtractCfg() {
         const current = loadExtractCfg() || {};
         const url = window.prompt(
-          "Paste Kitchen Order Extract webhook URL（喺部署助手 → Routines → Kitchen Order Extract 複製；只存呢部瀏覽器）",
+          "Paste STAR「Execute once」webhook URL（喺 STAR TSP 143IV emulator → Routines 複製；只存呢部瀏覽器）",
           current.url || ""
         );
         if (!url) return null;
@@ -289,7 +289,7 @@
           if (receipt.preview) {
             const img = document.createElement("img");
             img.className = "pdf-preview";
-            img.src = receipt.preview + "?v=$V";
+            img.src = receipt.preview + "?v=202609211449";
             img.alt = receipt.title || receipt.name || "Receipt preview";
             img.loading = "lazy";
             img.draggable = false;
@@ -320,7 +320,7 @@
 
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=$V")
+      fetch("manifest.json?v=202609211449")
         .then((response) => {
           if (!response.ok) throw new Error("Manifest request failed: " + response.status);
           return response.json();
