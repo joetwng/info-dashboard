@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Kitchen Order</title>
-    <link rel="stylesheet" href="receipts.css?v=202609211453" />
+    <link rel="stylesheet" href="receipts.css?v=202609211454" />
   </head>
   <body>
     <main class="receipts-page">
@@ -79,39 +79,11 @@
 
 
 
-      const EXTRACT_CFG_KEY = "star-receipts-extract-webhook";
+
+
+      const EXTRACT_GH_PAT_KEY = "star-receipts-extract-gh-pat";
+      const STAR_AGENT_LINK = "grokbot://app/v1/sidebar?agent=7eaa1558-73d5-4ce5-a62d-088988949266";
       const extractBtn = document.getElementById("extract-btn");
-
-      function loadExtractCfg() {
-        try {
-          const raw = localStorage.getItem(EXTRACT_CFG_KEY);
-          const cfg = raw ? JSON.parse(raw) : null;
-          if (cfg && cfg.url) return cfg;
-        } catch (e) {}
-        return null;
-      }
-
-      function saveExtractCfg(cfg) {
-        localStorage.setItem(EXTRACT_CFG_KEY, JSON.stringify(cfg));
-      }
-
-      function promptExtractCfg() {
-        const current = loadExtractCfg() || {};
-        const url = window.prompt(
-          "Paste STAR「Kitchen Order Execute once」Webhook URL（Routines 面板；只存本機瀏覽器）",
-          current.url || ""
-        );
-        if (!url) return null;
-        const key = window.prompt(
-          "Paste sender key（如有；可留空）。同樣只存本機，唔會寫入公開網頁。",
-          current.key || ""
-        );
-        const cfg = { url: url.trim(), key: (key || "").trim() };
-        if (!cfg.url) return null;
-        saveExtractCfg(cfg);
-        return cfg;
-      }
-
 
       async function fetchManifestNames() {
         const res = await fetch("manifest.json?v=" + Date.now(), { cache: "no-store" });
@@ -146,69 +118,34 @@
         return { count: added.length, names: added, total: latest.length, timedOut: true };
       }
 
-      function buildWebhookRequest(cfg) {
-        let url = cfg.url;
-        const key = (cfg.key || "").trim();
-        // Prefer key in query to avoid CORS preflight (Authorization triggers preflight).
-        if (key && url.indexOf("key=") === -1 && url.indexOf("token=") === -1) {
-          url += (url.indexOf("?") >= 0 ? "&" : "?") + "key=" + encodeURIComponent(key);
-        }
-        const body = JSON.stringify({
-          action: "drain",
-          mac: "00:11:62:42:79:1c",
-          source: "kitchen-order-extract-button",
-        });
-        return { url: url, body: body, key: key };
-      }
-
-      async function postWebhook(cfg) {
-        const req = buildWebhookRequest(cfg);
-        // 1) Simple-ish CORS attempt without custom auth headers
-        try {
-          const res = await fetch(req.url, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain;charset=UTF-8" },
-            body: req.body,
-            mode: "cors",
-          });
-          if (res.ok || res.type === "opaque") return { ok: true, mode: "cors" };
-          // some webhooks return 2xx only; 401 means URL reached but key wrong
-          if (res.status === 401 || res.status === 403) {
-            throw new Error("Webhook rejected auth (HTTP " + res.status + "). Check sender key.");
-          }
-          // continue to fallback for other statuses
-        } catch (e) {
-          if (e && /Webhook rejected auth/.test(e.message)) throw e;
-          console.warn("cors post failed, trying no-cors", e);
-        }
-        // 2) no-cors fire-and-forget (cannot read status; still often delivers)
-        await fetch(req.url, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=UTF-8" },
-          body: req.body,
-          mode: "no-cors",
-        });
-        return { ok: true, mode: "no-cors" };
-      }
-
-      async function runExtract(forceConfig) {
-        let cfg = forceConfig ? null : loadExtractCfg();
-        if (!cfg) cfg = promptExtractCfg();
-        if (!cfg) return;
-
+      async function runExtract() {
         const prev = extractBtn.textContent;
         extractBtn.disabled = true;
         extractBtn.textContent = "Extracting…";
+
         let beforeNames = [];
         try {
           beforeNames = await fetchManifestNames();
         } catch (e) {
           beforeNames = (receipts || []).map(function (r) { return r.name; }).filter(Boolean);
         }
+
         try {
-          await postWebhook(cfg);
+          // Browser cannot POST STAR webhook (CORS). Open STAR agent; user sends Execute once,
+          // or ask 部署助手 in chat to trigger STAR.
+          try {
+            window.location.href = STAR_AGENT_LINK;
+          } catch (e1) {
+            window.open(STAR_AGENT_LINK, "_blank");
+          }
+          window.alert(
+            "瀏覽器唔能直接打 STAR webhook（CORS）。\\n" +
+            "已打開 STAR TSP 143IV emulator — 回一句：Execute once\\n" +
+            "或者喺「部署助手」chat 講 Extract，我代你叫 STAR。\\n" +
+            "完成後呢頁會自動偵測新收據張數。"
+          );
           extractBtn.textContent = "Waiting…";
-          const result = await waitForNewReceipts(beforeNames, 180000);
+          const result = await waitForNewReceipts(beforeNames, 240000);
           if (result.count > 0) {
             extractBtn.textContent = "Received " + result.count;
             window.alert(
@@ -218,12 +155,8 @@
             location.reload();
             return;
           }
-          extractBtn.textContent = result.timedOut ? "0 new" : "Received 0";
-          window.alert(
-            "Received 0 receipts。\\n" +
-            "可能：queue 係空、webhook URL／key 錯、或 STAR 未寫入／未部署。\\n" +
-            "Shift＋撳 Extract 可重設 URL／key。"
-          );
+          extractBtn.textContent = "0 new";
+          window.alert("Received 0 receipts（未偵測到新檔；可再試或喺部署助手講 Extract）。");
           window.setTimeout(function () {
             extractBtn.textContent = prev;
             extractBtn.disabled = false;
@@ -231,10 +164,7 @@
         } catch (e) {
           console.warn("Extract failed", e);
           extractBtn.textContent = "Failed";
-          window.alert(
-            "Extract 失敗：\\n" + (e && e.message ? e.message : e) +
-            "\\n\\nShift＋撳 Extract 重新貼 STAR「Kitchen Order Execute once」webhook URL＋key。"
-          );
+          window.alert("Extract 失敗：\\n" + (e && e.message ? e.message : e));
           window.setTimeout(function () {
             extractBtn.textContent = prev;
             extractBtn.disabled = false;
@@ -243,8 +173,8 @@
       }
 
       if (extractBtn) {
-        extractBtn.addEventListener("click", function (event) {
-          runExtract(!!event.shiftKey);
+        extractBtn.addEventListener("click", function () {
+          runExtract();
         });
       }
 
@@ -375,7 +305,7 @@
           if (receipt.preview) {
             const img = document.createElement("img");
             img.className = "pdf-preview";
-            img.src = receipt.preview + "?v=202609211453";
+            img.src = receipt.preview + "?v=202609211454";
             img.alt = receipt.title || receipt.name || "Receipt preview";
             img.loading = "lazy";
             img.draggable = false;
@@ -406,7 +336,7 @@
 
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=202609211453")
+      fetch("manifest.json?v=202609211454")
         .then((response) => {
           if (!response.ok) throw new Error("Manifest request failed: " + response.status);
           return response.json();
