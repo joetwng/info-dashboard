@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Kitchen Order</title>
-    <link rel="stylesheet" href="receipts.css?v=202609220907" />
+    <link rel="stylesheet" href="receipts.css?v=202609221735" />
   </head>
   <body>
     <main class="receipts-page">
@@ -307,7 +307,7 @@
           if (receipt.preview) {
             const img = document.createElement("img");
             img.className = "pdf-preview";
-            img.src = receipt.preview + "?v=202609220907";
+            img.src = receipt.preview + "?v=202609221735";
             img.alt = receipt.title || receipt.name || "Receipt preview";
             img.loading = "lazy";
             img.draggable = false;
@@ -338,7 +338,7 @@
 
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=202609220907")
+      fetch("manifest.json?v=202609221735")
         .then((response) => {
           if (!response.ok) throw new Error("Manifest request failed: " + response.status);
           return response.json();
