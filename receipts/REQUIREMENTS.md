@@ -147,7 +147,7 @@ receipts/
 | 未印（預設） | `Show Printed` | 改顯示已印 |
 | 已印 | `Show Un-Print` | 改顯示未印 |
 
-- **Show Un-Print（未印列表）**：只顯示未印；按 `createdAt` **舊→新**（ascending）。
+- **Show Un-Print（未印列表）**：只顯示未印；按 `createdAt` **新→舊**（descending）。
 - **Show Printed（已印列表）**：只顯示已印；按 `createdAt` **新→舊**（descending）。
 - 切換後立即 re-render；記住 `view-mode`。
 
@@ -188,7 +188,7 @@ receipts/
 - [ ] 只有 PDF 區可滾；標題／搜尋／掣固定。
 - [ ] 預覽 5 欄網格；左→右、上→下；闊度一致、高度跟內容；白邊已裁。
 - [ ] 單擊唔開 PDF；雙擊切換已印並更新清單，**唔整頁 reload**。
-- [ ] 預設顯示未印、舊→新；撳 `Show Printed` 顯示已印、新→舊；掣改 `Show Un-Print`，再撳返未印。
+- [ ] 預設顯示未印、新→舊；撳 `Show Printed` 顯示已印、新→舊；掣改 `Show Un-Print`，再撳返未印。
 - [ ] 搜尋可按檔名片段過濾。
 - [ ] 全螢幕可進／出；全螢幕下雙擊仍保持全螢幕。
 - [ ] 滾動停 2 秒後自動平滑回頂。

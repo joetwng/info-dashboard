@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Kitchen Order</title>
-    <link rel="stylesheet" href="receipts.css?v=202609220901" />
+    <link rel="stylesheet" href="receipts.css?v=202609220905" />
   </head>
   <body>
     <main class="receipts-page">
@@ -276,13 +276,9 @@
           .sort(function (a, b) {
             const ac = a.createdAt || "";
             const bc = b.createdAt || "";
-            if (wantPrinted) {
-              if (ac < bc) return 1;
-              if (ac > bc) return -1;
-            } else {
-              if (ac < bc) return -1;
-              if (ac > bc) return 1;
-            }
+            // Printed and unprinted: newest creation date first
+            if (ac < bc) return 1;
+            if (ac > bc) return -1;
             return (a.name || "").localeCompare(b.name || "");
           });
       }
@@ -305,7 +301,7 @@
           if (receipt.preview) {
             const img = document.createElement("img");
             img.className = "pdf-preview";
-            img.src = receipt.preview + "?v=202609220901";
+            img.src = receipt.preview + "?v=202609220905";
             img.alt = receipt.title || receipt.name || "Receipt preview";
             img.loading = "lazy";
             img.draggable = false;
@@ -336,7 +332,7 @@
 
       searchInput.addEventListener("input", renderReceipts);
 
-      fetch("manifest.json?v=202609220901")
+      fetch("manifest.json?v=202609220905")
         .then((response) => {
           if (!response.ok) throw new Error("Manifest request failed: " + response.status);
           return response.json();
